@@ -3,21 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="eNHa">
+<meta name="theme-color" content="#085041">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
 <title>eNHa – Catatan Renovasi</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
 
   :root {
-    --bg: #F7F5F0;
+    --bg: #F0F7F5;
     --surface: #FFFFFF;
-    --border: #E4E0D8;
-    --text: #1C1917;
-    --text-muted: #78716C;
-    --accent: #C2773A;
-    --accent-light: #FDF0E6;
-    --accent-dark: #A0602C;
-    --green: #4A7C59;
-    --green-light: #EBF4EE;
+    --border: #C5DDD7;
+    --text: #0D2B24;
+    --text-muted: #4A7066;
+    --accent: #0F6E56;
+    --accent-light: #E1F5EE;
+    --accent-dark: #085041;
+    --green: #0F6E56;
+    --green-light: #E1F5EE;
     --red: #B04040;
     --red-light: #FCEAEA;
     --shadow: 0 1px 4px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.05);
@@ -34,7 +41,7 @@
   }
 
   .header {
-    background: var(--text);
+    background: #085041;
     color: white;
     padding: 20px 20px 16px;
     position: sticky;
@@ -220,9 +227,9 @@
     font-size: 17px;
     flex-shrink: 0;
   }
-  .icon-material { background: #EEF2FF; }
+  .icon-material { background: #D6F0E8; }
   .icon-jasa { background: #FFF7ED; }
-  .icon-peralatan { background: #F0FDF4; }
+  .icon-peralatan { background: #E1F5EE; }
   .icon-lainnya { background: #FAF5FF; }
 
   .entry-body { flex: 1; min-width: 0; }
@@ -749,6 +756,15 @@ document.getElementById('modalOverlay').addEventListener('click', function(e) {
 });
 
 // Init
+
+// Register Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/enha-renovasi/sw.js')
+      .then(() => console.log('SW registered'))
+      .catch(e => console.log('SW error:', e));
+  });
+}
 document.getElementById('fTanggal').valueAsDate = new Date();
 loadAnggaran();
 loadData();

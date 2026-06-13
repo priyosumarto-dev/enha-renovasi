@@ -1,0 +1,23 @@
+{
+  "name": "eNHa – Catatan Renovasi",
+  "short_name": "eNHa",
+  "description": "Aplikasi catatan pengeluaran renovasi rumah",
+  "start_url": "/enha-renovasi/",
+  "scope": "/enha-renovasi/",
+  "display": "standalone",
+  "background_color": "#F0F7F5",
+  "theme_color": "#085041",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
