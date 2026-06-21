@@ -406,7 +406,7 @@
     </div>
     <div class="form-group">
       <label>Jumlah (Rp)</label>
-      <input type="text" id="fJumlah" placeholder="0">
+      <input type="text" id="fJumlah" placeholder="0" inputmode="numeric">
     </div>
     <div class="form-group">
       <label>Toko / Vendor</label>
@@ -462,7 +462,7 @@
       </div>
       <div class="modal-group">
         <label>Jumlah (Rp)</label>
-        <input type="text" id="eJumlah">
+        <input type="text" id="eJumlah" inputmode="numeric">
       </div>
       <div class="modal-group">
         <label>Toko / Vendor</label>
@@ -517,6 +517,21 @@ document.getElementById('inputAnggaran').addEventListener('input', function() {
   localStorage.setItem('enha_anggaran', val);
   updateStats();
 });
+
+// Auto-format pemisah ribuan untuk field jumlah (form tambah & edit)
+function attachRupiahFormat(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('input', function() {
+    const cursorFromEnd = this.value.length - this.selectionStart;
+    const val = parseRp(this.value);
+    this.value = val ? val.toLocaleString('id-ID') : '';
+    const newPos = Math.max(this.value.length - cursorFromEnd, 0);
+    this.setSelectionRange(newPos, newPos);
+  });
+}
+attachRupiahFormat('fJumlah');
+attachRupiahFormat('eJumlah');
 
 function updateStats() {
   const total = data.reduce((s, d) => s + Number(d.jumlah || 0), 0);
@@ -693,9 +708,19 @@ function setFilter(cat) {
   renderList();
 }
 
+function normalizeKategori(k) {
+  if (!k) return 'Lainnya';
+  const s = String(k).trim().toLowerCase();
+  if (s === 'material') return 'Material';
+  if (s === 'jasa' || s === 'jasa tukang') return 'Jasa Tukang';
+  if (s === 'peralatan') return 'Peralatan';
+  if (s === 'lainnya') return 'Lainnya';
+  return k; // biarkan apa adanya kalau memang sudah format lain
+}
+
 function renderList() {
   const list = document.getElementById('entryList');
-  const filtered = activeFilter ? data.filter(d => d.kategori === activeFilter) : data;
+  const filtered = activeFilter ? data.filter(d => normalizeKategori(d.kategori) === activeFilter) : data;
 
   if (!filtered.length) {
     list.innerHTML = `<div class="empty-state"><div class="emoji">🔨</div><p>Belum ada data pengeluaran.</p></div>`;
@@ -703,7 +728,8 @@ function renderList() {
   }
 
   list.innerHTML = filtered.map(d => {
-    const ikon = ikonMap[d.kategori] || { icon: '📦', cls: 'icon-lainnya' };
+    const katNorm = normalizeKategori(d.kategori);
+    const ikon = ikonMap[katNorm] || { icon: '📦', cls: 'icon-lainnya' };
     const tglRaw = d.tanggal ? d.tanggal.split('T')[0] : '';
     const tgl = tglRaw ? new Date(tglRaw + 'T00:00:00').toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' }) : '-';
     return `
@@ -711,7 +737,7 @@ function renderList() {
       <div class="entry-icon ${ikon.cls}">${ikon.icon}</div>
       <div class="entry-body">
         <div class="entry-item">${d.item}</div>
-        <div class="entry-meta">${tgl} · ${d.kategori}${d.vendor ? ' · ' + d.vendor : ''}</div>
+        <div class="entry-meta">${tgl} · ${katNorm}${d.vendor ? ' · ' + d.vendor : ''}</div>
         ${d.catatan ? `<div class="entry-meta" style="margin-top:2px;font-style:italic">${d.catatan}</div>` : ''}
       </div>
       <div class="entry-right">
