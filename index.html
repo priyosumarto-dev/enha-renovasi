@@ -618,7 +618,7 @@ async function simpanData() {
 }
 
 function bukaEdit(id) {
-  const d = data.find(x => x.id === id);
+  const d = data.find(x => String(x.id) === String(id));
   if (!d) return;
   editId = id;
   document.getElementById('eTanggal').value = d.tanggal ? d.tanggal.split('T')[0] : '';
@@ -665,7 +665,7 @@ async function updateData() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updated)
     });
-    const idx = data.findIndex(x => x.id === editId);
+    const idx = data.findIndex(x => String(x.id) === String(editId));
     if (idx !== -1) data[idx] = updated;
     data.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
     tutupModal();
